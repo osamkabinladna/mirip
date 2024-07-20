@@ -75,11 +75,9 @@ def plot_cosine_similarity(embed1, embed2):
 st.title("Face Comparison App")
 
 st.markdown("""
-### Introduction
-This app uses face detection and recognition models to compare two images. Upload clear images of faces for best results.
-
-### What is an Embedding?
-An embedding is a representation of an image (or other data) in a high-dimensional space. In this context, it captures the essential features of a face, allowing us to compare different faces.
+### What this model does
+this model captures the high dimensional representation of a face
+distance metrics are used to quantify how similar faces are to each other 
 
 ### Euclidean Distance
 The Euclidean distance between two points in a high-dimensional space is a measure of the straight-line distance between them.
