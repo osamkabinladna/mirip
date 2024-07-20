@@ -76,8 +76,8 @@ st.title("Face Comparison App")
 
 st.markdown("""
 ### What this model does
-this model captures the high dimensional representation of a face
-distance metrics are used to quantify how similar faces are to each other 
+This model captures the high dimensional representation of a face.
+Distance metrics are used to quantify how similar faces are to each other 
 
 ### Euclidean Distance
 The Euclidean distance between two points in a high-dimensional space is a measure of the straight-line distance between them.
