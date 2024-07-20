@@ -18,13 +18,11 @@ def cosine_distance(a, b):
     cosim = F.cosine_similarity(a.view(-1), b.view(-1), dim=0).item()
     return (cosim + 1) / 2 * 100
 
-def compare_faces(img1, img2, edist_treshold, csim_treshold):
+def compare_faces(img1, img2):
     """
     :param img1: PIL Image
     :param img2: PIL Image
-    :param edist_treshold: Euclidean distance threshold
-    :param csim_treshold: Cosine similarity threshold
-    :return: Euclidean distance between img1 and img2
+    :return: Euclidean distance between img1 and img2, cosine similarity, and annotated images
     """
 
     edict = dict(e1=None, e2=None)
@@ -49,40 +47,31 @@ def compare_faces(img1, img2, edist_treshold, csim_treshold):
                 edict['e2'] = embed
 
     edist = euclidean_distance(edict['e1'], edict['e2'])
-    if edist < edist_treshold:
-        st.success(f"Passed euclidean distance test with edist={edist}")
-    else:
-        st.error(f"Failed euclidean distance test with edist={edist}")
-
     csim_percent = cosine_distance(edict['e1'], edict['e2'])
-    if csim_percent > csim_treshold:
-        st.success(f"Passed cosine similarity percentage test with csim={csim_percent}")
-    else:
-        st.error(f"Failed cosine similarity percentage test with csim={csim_percent}")
 
-    return edist, annotated_images, edict['e1'], edict['e2']
+    return edist, csim_percent, annotated_images, edict['e1'], edict['e2']
 
 # Streamlit app
 st.title("Face Comparison App")
 
 st.markdown("""
-### What this model does
-This model captures the high dimensional representation of a face.
-Distance metrics are used to quantify how similar faces are to each other 
+### Introduction
+This app uses face detection and recognition models to compare two images. Upload clear images of faces for best results.
+
+### What is an Embedding?
+An embedding is a representation of an image (or other data) in a high-dimensional space. In this context, it captures the essential features of a face, allowing us to compare different faces.
 
 ### Euclidean Distance
 The Euclidean distance between two points in a high-dimensional space is a measure of the straight-line distance between them.
 - **Formula**: 
   $$d(x, y) = \\sqrt{\\sum_{i=1}^{n} (x_i - y_i)^2}$$
-- **Interpretation**: Smaller distances indicate higher similarity. Distance of 0 means that the embeddings are identical
-- **Threshold**: pass < threshold < fail
+- **Interpretation**: Smaller distances indicate higher similarity.
 
 ### Cosine Similarity
 Cosine similarity measures the cosine of the angle between two vectors in a high-dimensional space.
 - **Formula**: 
   $$\\text{cosine\_similarity}(A, B) = \\frac{A \\cdot B}{||A|| \\cdot ||B||}$$
-- **Interpretation**: Higher values (closer to 1 or 100%) indicate higher similarity. Cosine similarity of 100% means that the embeddings are identical
-- **Threshold**: fail < threshold < pass
+- **Interpretation**: Higher values (closer to 1 or 100%) indicate higher similarity.
 
 ### Set Thresholds
 Use the sliders below to set the thresholds for Euclidean distance and cosine similarity. Adjust them based on the similarity you expect between the images.
@@ -102,7 +91,7 @@ if img1 and img2:
     image2 = Image.open(img2)
 
     # Compare faces
-    distance, annotated_images, embed1, embed2 = compare_faces(image1, image2, edist_treshold, csim_treshold)
+    edist, csim_percent, annotated_images, embed1, embed2 = compare_faces(image1, image2)
 
     # Display images side by side
     col1, col2 = st.columns(2)
@@ -110,5 +99,29 @@ if img1 and img2:
         st.image(annotated_images[0], caption="Image 1", use_column_width=True)
     with col2:
         st.image(annotated_images[1], caption="Image 2", use_column_width=True)
+
+    # Show current distances and similarities
+    epassed = edist < edist_treshold
+    cpassed = csim_percent > csim_treshold
+
+    if epassed:
+        st.success(f"Euclidean distance test passed! Current Euclidean Distance: {edist:.2f} (Threshold: {edist_treshold})")
+    else:
+        st.error(f"Euclidean distance test Failed! Current Euclidean Distance: {edist:.2f} (Threshold: {edist_treshold})")
+
+    if cpassed:
+        st.success(f"Cosine similarity test passed! Current Cosine Similarity: {csim_percent:.2f} (Threshold: {csim_treshold})")
+    else:
+        st.error(f"Cosine similarity test Failed! Current Euclidean Distance: {csim_percent:.2f} (Threshold: {csim_treshold})")
+
+    if cpassed and epassed:
+        st.success("We predicted that both pictures are from the same person")
+        st.balloons()
+    elif not cpassed and not epassed:
+        st.error("We predicted that both pictures are from the different person")
+    else:
+        st.info("Result is inconclusive, we suggest that you adjust the threshold accordingly")
+
+
 
 st.info("Note: This app uses face detection and recognition models. Upload clear images of faces for best results.")
