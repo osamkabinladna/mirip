@@ -74,13 +74,15 @@ Distance metrics are used to quantify how similar faces are to each other
 The Euclidean distance between two points in a high-dimensional space is a measure of the straight-line distance between them.
 - **Formula**: 
   $$d(x, y) = \\sqrt{\\sum_{i=1}^{n} (x_i - y_i)^2}$$
-- **Interpretation**: Smaller distances indicate higher similarity.
+- **Interpretation**: Smaller distances indicate higher similarity. Distance of 0 means that the embeddings are identical
+- **Threshold**: pass < threshold < fail
 
 ### Cosine Similarity
 Cosine similarity measures the cosine of the angle between two vectors in a high-dimensional space.
 - **Formula**: 
   $$\\text{cosine\_similarity}(A, B) = \\frac{A \\cdot B}{||A|| \\cdot ||B||}$$
-- **Interpretation**: Higher values (closer to 1 or 100%) indicate higher similarity.
+- **Interpretation**: Higher values (closer to 1 or 100%) indicate higher similarity. Cosine similarity of 100% means that the embeddings are identical
+- **Threshold**: fail < threshold < pass
 
 ### Set Thresholds
 Use the sliders below to set the thresholds for Euclidean distance and cosine similarity. Adjust them based on the similarity you expect between the images.
