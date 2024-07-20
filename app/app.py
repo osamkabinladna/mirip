@@ -62,15 +62,6 @@ def compare_faces(img1, img2, edist_treshold, csim_treshold):
 
     return edist, annotated_images, edict['e1'], edict['e2']
 
-def plot_cosine_similarity(embed1, embed2):
-    cos_sim = F.cosine_similarity(embed1.unsqueeze(0), embed2.unsqueeze(0), dim=1).detach().numpy()
-    cos_sim_matrix = np.outer(cos_sim, cos_sim)
-
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cos_sim_matrix, annot=True, cmap='coolwarm', cbar=True, square=True)
-    plt.title('Pairwise Cosine Similarity')
-    st.pyplot(plt)
-
 # Streamlit app
 st.title("Face Comparison App")
 
@@ -117,8 +108,5 @@ if img1 and img2:
         st.image(annotated_images[0], caption="Image 1", use_column_width=True)
     with col2:
         st.image(annotated_images[1], caption="Image 2", use_column_width=True)
-
-    # Plot pairwise cosine similarity
-    plot_cosine_similarity(embed1, embed2)
 
 st.info("Note: This app uses face detection and recognition models. Upload clear images of faces for best results.")
